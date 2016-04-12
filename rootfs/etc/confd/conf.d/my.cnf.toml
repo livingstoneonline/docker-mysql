@@ -1,0 +1,6 @@
+[template]
+src = "my.cnf.tmpl"
+dest = "/etc/mysql/my.cnf"
+prefix= "/mysql"
+mode="0644"
+keys = ["/root/user", "/root/password"]
