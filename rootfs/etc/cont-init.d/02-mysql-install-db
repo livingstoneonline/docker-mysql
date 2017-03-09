@@ -13,7 +13,7 @@ multisubstitute
 }
 if -t { s6-test ! -d "/var/lib/mysql/mysql" }
    foreground { s6-setuidgid mysql mysql_install_db --user mysql }
-   foreground { mkdir /run/mysqld }
+   foreground { mkdir -p /run/mysqld }
    foreground { chown mysql:mysql /run/mysqld }
    background { s6-setuidgid mysql mysqld --skip-networking --skip-grant-tables }
    importas MYSQLD_PID !
