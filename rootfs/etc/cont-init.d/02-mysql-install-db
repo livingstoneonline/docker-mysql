@@ -6,36 +6,37 @@
 # When installing it removes all existing users and configures the 'root' user.
 # Also removes the 'test' database which presents a security risk.
 with-contenv
+foreground { mkdir /run/mysqld }
+foreground { chown mysql:mysql /run/mysqld }
+if -t { s6-test ! -d "/var/lib/mysql/mysql" }
+foreground { s6-setuidgid mysql mysql_install_db --user mysql }
+background { s6-setuidgid mysql mysqld --skip-networking }
+importas MYSQLD_PID !
 multisubstitute
 {
   import -i MYSQL_ROOT_USER
   import -i MYSQL_ROOT_PASSWORD
 }
-if -t { s6-test ! -d "/var/lib/mysql/mysql" }
-   foreground { s6-setuidgid mysql mysql_install_db --user mysql }
-   foreground { mkdir -p /run/mysqld }
-   foreground { chown mysql:mysql /run/mysqld }
-   background { s6-setuidgid mysql mysqld --skip-networking --skip-grant-tables }
-   importas MYSQLD_PID !
-   foreground {
-     loopwhilex -x 0
-     redirfd -w 1 /dev/null
-     redirfd -w 2 /dev/null
-     mysql --protocol=socket -u "${MYSQL_ROOT_USER}" -e "SELECT 1"
-   }
-   foreground {
-     pipeline {
-      echo "SET @@SESSION.SQL_LOG_BIN=0 ;
-            DELETE FROM mysql.user ;
-            FLUSH PRIVILEGES ;
-            CREATE USER \"${MYSQL_ROOT_USER}\"@\"%\" IDENTIFIED BY \"${MYSQL_ROOT_PASSWORD}\" ;
-            GRANT ALL ON *.* TO \"${MYSQL_ROOT_USER}\"@\"%\" WITH GRANT OPTION ;
-            DROP DATABASE IF EXISTS test ;
-            FLUSH PRIVILEGES ;"
-     }
-     mysql --protocol=socket -u "${MYSQL_ROOT_USER}"
-   }
-   foreground {
-     kill -s TERM $MYSQLD_PID
-   }
-   sleep 5
+foreground {
+    foreground {
+        loopwhilex -x 0
+        redirfd -w 1 /dev/null
+        redirfd -w 2 /dev/null
+        mysql --no-defaults --protocol=socket --user=root -e "SELECT 1"
+    }
+    foreground {
+        pipeline {
+            echo "SET @@SESSION.SQL_LOG_BIN=0;
+                  DELETE FROM mysql.user ;
+                  CREATE USER \"${MYSQL_ROOT_USER}\"@\"%\" IDENTIFIED BY \"${MYSQL_ROOT_PASSWORD}\" ;
+                  GRANT ALL ON *.* TO \"${MYSQL_ROOT_USER}\"@\"%\" WITH GRANT OPTION ;
+                  DROP DATABASE IF EXISTS test ;
+                  FLUSH PRIVILEGES;"
+        }
+        mysql --no-defaults --protocol=socket --user=root
+    }
+    foreground {
+        kill -s TERM $MYSQLD_PID
+    }
+    sleep 5
+}

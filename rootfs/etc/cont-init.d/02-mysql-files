@@ -1,0 +1,12 @@
+#!/usr/bin/execlineb -P
+# -*- mode: sh -*-
+# vi: set ft=sh:
+# Creates the mysql-files directory
+#
+with-contenv
+foreground {
+  mkdir -p /var/lib/mysql-files
+}
+foreground {
+  chown -R mysql:mysql /var/lib/mysql-files
+}

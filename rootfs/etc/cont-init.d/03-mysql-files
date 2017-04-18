@@ -1,6 +1,0 @@
-#!/usr/bin/execlineb -P
-# -*- mode: sh -*-
-# vi: set ft=sh:
-# Changes the permissions on the mysql-files directory so it can be used by
-# import scripts.
-foreground { chmod -R a=rwx /var/lib/mysql-files }
