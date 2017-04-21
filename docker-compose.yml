@@ -4,3 +4,7 @@ services:
     build: .
     container_name: mysql
     image: livingstoneonline/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+    ports:
+      - "3306:3306"

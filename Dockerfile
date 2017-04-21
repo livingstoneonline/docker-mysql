@@ -1,7 +1,7 @@
-FROM livingstoneonline/base
+FROM livingstoneonline/base:alpine
 MAINTAINER Nigel Banks <nigel.g.banks@gmail.com>
 
-LABEL "License"="MIT" \
+LABEL "License"="GPLv3" \
       "Version"="0.0.1"
 
 EXPOSE 3306
