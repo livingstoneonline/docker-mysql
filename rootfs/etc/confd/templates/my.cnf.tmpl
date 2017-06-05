@@ -25,7 +25,8 @@ max-allowed-packet             = 16M
 max-connect-errors             = 1000000
 
 # DATA STORAGE #
-datadir                        = /var/lib/mysql/
+datadir                        = /var/lib/mysql
+tmpdir                         = /tmp
 
 # BINARY LOGGING #
 log-bin                        = mysql-bin
@@ -33,7 +34,7 @@ expire-logs-days               = 14
 sync-binlog                    = 1
 
 # CACHES AND LIMITS #
-tmp-table-size                 = 32M
+tmp-table-size                 = 256M
 max-heap-table-size            = 32M
 query-cache-type               = 0
 query-cache-size               = 0
